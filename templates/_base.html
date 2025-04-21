@@ -14,15 +14,16 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">CodingYar.com</a>
+        <a class="navbar-brand" href="#">Ashkan Pourabdollah</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-                <a class="nav-link" href="#">Blog</a>
+                <a class="nav-link active" aria-current="page" href="{% url 'posts_list' %}">Home</a>
+                <a class="nav-link" href="{% url 'posts_list' %}">Blog</a>
+                <a class="nav-link" href="{% url 'add_new_post' %}">New Post</a>
             </div>
         </div>
         <div class="mx-2 text-white">Welcome</div>

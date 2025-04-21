@@ -28,7 +28,7 @@ class BlogPostTest(TestCase):
 
     # def setUp(self):
 
-    #######################################################################################################################
+#######################################################################################################################
     def test_post_list_view_urls_by_url(self):
         response = self.client.get("/blog/")
         self.assertEqual(response.status_code, 200)
@@ -46,7 +46,7 @@ class BlogPostTest(TestCase):
         self.assertContains(response, self.post1.title)
         self.assertNotContains(response, self.post2.title)
 
-    #######################################################################################################################
+#######################################################################################################################
     def test_post_details_view_urls_by_url(self):
         response = self.client.get(f'/blog/{self.post1.id}/')
         self.assertEqual(response.status_code, 200)
@@ -65,3 +65,60 @@ class BlogPostTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
 #######################################################################################################################
+    def test_check_post_str_is_equal_with_title(self):
+        self.assertEqual(self.post1.title, str(self.post1))
+
+#######################################################################################################################
+    def test_delete_view_urls_by_url(self):
+        response = self.client.get(f'/blog/{self.post1.id}/delete/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_view_urls_by_name(self):
+        response = self.client.get(reverse('delete_post', args=[self.post1.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_check_delete_post_id_is_exists(self):
+        response = self.client.get(f'/blog/{self.post1.id}/delete/')
+        self.assertContains(response, self.post1.title)
+
+    def test_delete_post(self):
+        response = self.client.post(reverse('delete_post', args=[self.post2.id]))
+        self.assertEqual(response.status_code, 302)
+
+#######################################################################################################################
+    def test_update_view_urls_by_url(self):
+        response = self.client.get(f'/blog/{self.post1.id}/update/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_view_urls_by_name(self):
+        response = self.client.get(reverse('update_post', args=[self.post1.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_check_update_post_id_is_exists(self):
+        response = self.client.get(f'/blog/{self.post1.id}/update/')
+        self.assertContains(response, self.post1.title)
+
+    def test_update_post(self):
+        response = self.client.post(reverse('update_post', args=[self.post1.id]), {
+            'title': 'Post1 updated!',
+            'text': 'Post1 text updated!',
+            'status': 'pub',
+            'author': self.post1.author.id,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Post.objects.get(id=self.post1.id).title, 'Post1 updated!')
+        self.assertEqual(Post.objects.get(id=self.post1.id).text, 'Post1 text updated!')
+
+#######################################################################################################################
+    def test_create_post(self):
+        response = self.client.post(reverse('add_new_post'), {
+            'title': 'test post',
+            'text': 'this is a test for test post!',
+            'author': self.user.id,
+            'status': 'pub',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Post.objects.last().title, 'test post')
+        self.assertEqual(Post.objects.last().text, 'this is a test for test post!')
+        self.assertEqual(Post.objects.last().author, self.user)
+        self.assertEqual(Post.objects.last().status, 'pub')
